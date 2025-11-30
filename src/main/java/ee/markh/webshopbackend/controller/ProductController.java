@@ -3,6 +3,8 @@ package ee.markh.webshopbackend.controller;
 import ee.markh.webshopbackend.entity.Product;
 import ee.markh.webshopbackend.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,16 +19,25 @@ public class ProductController {
     private ProductRepository productRepository;
 
     // localhost:8080/products --> käivitan selle funktsiooni
+    // localhost:8080/products?categoryId=electronics&page=0&size=20&sort=id,asc
+    // size ja sort on optional automaatselt
     @GetMapping("products")
-    public List<Product> getProducts() {
-        return productRepository.findAll();
+    public Page<Product> getProducts(@RequestParam Long categoryId, Pageable pageable) {
+        if (categoryId == 0) {
+            return productRepository.findAll(pageable);
+        } else {
+            return productRepository.findByCategoryId(categoryId, pageable);
+        }
     }
 
     // tegusõna tavaliselt ei panda siia endpoint nime sisse. annotation on tegusõna
     @PostMapping("products")
-    public List<Product> addProduct(@RequestBody Product product) {
+    public List<Product> addProduct(@RequestBody Product product, Pageable pageable) {
         if (product.getId() != null) {
             throw new RuntimeException("Cannot add product with id");
+        }
+        if (product.getPrice() <= 0) {
+            throw new RuntimeException("Price must be greater than 0");
         }
         productRepository.save(product);
         return productRepository.findAll();
@@ -41,14 +52,14 @@ public class ProductController {
     // requestparamiga
     // localhost:8080/products?id=
     @DeleteMapping("products")
-    public List<Product> deleteProduct(@RequestParam String id) {
+    public List<Product> deleteProduct(@RequestParam Long id) {
         productRepository.deleteById(id);
         return productRepository.findAll();
     }
 
     // localhost:8080/products/uuid-uuid
     @GetMapping("products/{id}")
-    public Product getProduct(@PathVariable String id) {
+    public Product getProduct(@PathVariable Long id) {
         return productRepository.findById(id).orElse(null);
     }
     // RequestParam ja PathVariable --> mõlemaid võib üldjuhul kasutada

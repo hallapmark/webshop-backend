@@ -1,8 +1,14 @@
 package ee.markh.webshopbackend.repository;
 
 import ee.markh.webshopbackend.entity.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProductRepository  extends JpaRepository<Product, String> {
+import java.util.List;
 
+public interface ProductRepository  extends JpaRepository<Product, Long> {
+
+    Page<Product> findByCategoryId(Long id, Pageable pageable);
 }
+// 20 on default lk peal
