@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+// for local dev, enable CrossOrigin (where frontend is deployed)
 @CrossOrigin(origins = "http://localhost:5173")
 public class CategoryController {
     // base URL - localhost:8080
