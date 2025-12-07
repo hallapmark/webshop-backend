@@ -4,6 +4,7 @@ import ee.markh.webshopbackend.entity.Person;
 import ee.markh.webshopbackend.model.AuthToken;
 import ee.markh.webshopbackend.model.LoginCredentials;
 import ee.markh.webshopbackend.repository.PersonRepository;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -14,8 +15,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.SecretKey;
+import java.nio.file.AccessDeniedException;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 // we have OpenAPI 3.0 (Swagger) documentation (see pom.xml) so we can do
@@ -74,6 +77,7 @@ public class PersonController {
         return personRepository.findById(id).orElse(null);
     }
 
+    // TODO: Remove or make editor/admin exclusive
     @PutMapping("persons")
     public List<Person> editPerson(@RequestBody Person person) {
         if (person.getId() == null) {
@@ -81,6 +85,43 @@ public class PersonController {
         }
         personRepository.save(person);
         return personRepository.findAll();
+    }
+
+    // TODO: Use AuthenticationPrincipal later. For now implementing in a more manual manner for practice
+    @PutMapping("editownprofile")
+    public Person editOwnProfile(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody Person person) {
+        // Expects "Bearer <token>"
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7);
+
+        String idFromToken;
+        try {
+            idFromToken = Jwts
+                .parser()
+                .verifyWith(getSecretKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
+        } catch (JwtException e) {
+            throw new RuntimeException("Invalid token");
+        }
+        Long idFromTokenLong = Long.valueOf(idFromToken);
+
+        Person existing = personRepository.findById(idFromTokenLong)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Whitelist the fields we want to allow to be changed.
+        // Email, password, role, id not changeable from frontend for now
+        existing.setFirstName(person.getFirstName());
+        existing.setLastName(person.getLastName());
+        personRepository.save(existing);
+        return existing;
     }
 
     @PostMapping("login")
@@ -106,14 +147,17 @@ public class PersonController {
     //localhost:8080/person?token=
     @GetMapping("person")
     public Person getPersonByToken(@RequestParam String token) {
-        String id = Jwts
-                .parser()
-                .verifyWith(getSecretKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
-
-        return personRepository.findById(Long.parseLong(id)).orElseThrow();
+        String idFromToken;
+        try {
+            idFromToken = Jwts.parser()
+                    .verifyWith(getSecretKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getSubject();
+        } catch (JwtException e) {
+            throw new RuntimeException("Invalid token", e);
+        }
+        return personRepository.findById(Long.parseLong(idFromToken)).orElseThrow();
     }
 }
