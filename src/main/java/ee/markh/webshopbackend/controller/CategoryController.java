@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Random;
 
 @RestController
 // for local dev, enable CrossOrigin (where frontend is deployed)
@@ -13,6 +14,9 @@ import java.util.List;
 public class CategoryController {
     // base URL - localhost:8080
     // API endpoint - categories
+
+//    @Autowired
+//    Random random;
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -40,4 +44,12 @@ public class CategoryController {
         categoryRepository.deleteById(id);
         return categoryRepository.findAll();
     }
+
+    // bean test
+//    @GetMapping("random-number")
+//    public int randomNumber() {
+////        Random random = new Random();
+//        System.out.println(random);
+//        return random.nextInt(100);
+//    }
 }
