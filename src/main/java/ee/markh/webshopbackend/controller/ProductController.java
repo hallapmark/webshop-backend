@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController // annab võimekuse API päringuid siia faili teha
-@CrossOrigin(origins = "http://localhost:5173")
 public class ProductController {
     // base URL - localhost:8080
     // API endpoint - products

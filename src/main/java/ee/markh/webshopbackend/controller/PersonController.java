@@ -4,6 +4,7 @@ import ee.markh.webshopbackend.entity.Person;
 import ee.markh.webshopbackend.model.AuthToken;
 import ee.markh.webshopbackend.model.LoginCredentials;
 import ee.markh.webshopbackend.repository.PersonRepository;
+import ee.markh.webshopbackend.service.JwtService;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -12,6 +13,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.SecretKey;
@@ -26,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 // or http://localhost:8080/v3/api-docs for the json
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
 @Tag(name = "Persons", description = "Person management APIs")
 public class PersonController {
     // base URL - localhost:8080
@@ -35,18 +37,8 @@ public class PersonController {
     @Autowired
     private PersonRepository personRepository;
 
-    // access env variable JWT_SIGNING_KEY_BASE64. More Spring magic/auto-conversion
-    @Value("${jwt.signing.key.base64}")
-    private String jwtSigningKeyBase64;
-    // base 64 formaadis peab jwtSigningKeyBase64 olema
-
-    private SecretKey getSecretKey() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(jwtSigningKeyBase64));
-    }
-
-    private Date getExpiration() {
-        return new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(3));
-    }
+    @Autowired
+    private JwtService jwtService;
 
     // test swagger docs (not looking to add the tags comprehensively for now)
     @Operation(summary = "Get all persons")
@@ -88,41 +80,42 @@ public class PersonController {
     }
 
     // TODO: Use AuthenticationPrincipal later. For now implementing in a more manual manner for practice
-    @PutMapping("editownprofile")
-    public Person editOwnProfile(
-            @RequestHeader("Authorization") String authHeader,
-            @RequestBody Person person) {
-        // Expects "Bearer <token>"
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new RuntimeException("Invalid Authorization header");
-        }
-
-        String token = authHeader.substring(7);
-
-        String idFromToken;
-        try {
-            idFromToken = Jwts
-                .parser()
-                .verifyWith(getSecretKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
-        } catch (JwtException e) {
-            throw new RuntimeException("Invalid token");
-        }
-        Long idFromTokenLong = Long.valueOf(idFromToken);
-
-        Person existing = personRepository.findById(idFromTokenLong)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Whitelist the fields we want to allow to be changed.
-        // Email, password, role, id not changeable from frontend for now
-        existing.setFirstName(person.getFirstName());
-        existing.setLastName(person.getLastName());
-        personRepository.save(existing);
-        return existing;
-    }
+//    @PutMapping("editownprofile")
+//    public Person editOwnProfile(
+//            @RequestHeader("Authorization") String authHeader,
+//            @RequestBody Person person) {
+//        // Expects "Bearer <token>"
+//        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+//            throw new RuntimeException("Invalid Authorization header");
+//        }
+//
+//        // https://swagger.io/docs/specification/v3_0/authentication/bearer-authentication/
+//        String token = authHeader.substring(7);
+//
+//        String idFromToken;
+//        try {
+//            idFromToken = Jwts
+//                .parser()
+//                .verifyWith(getSecretKey())
+//                .build()
+//                .parseSignedClaims(token)
+//                .getPayload()
+//                .getSubject();
+//        } catch (JwtException e) {
+//            throw new RuntimeException("Invalid token");
+//        }
+//        Long idFromTokenLong = Long.valueOf(idFromToken);
+//
+//        Person existing = personRepository.findById(idFromTokenLong)
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        // Whitelist the fields we want to allow to be changed.
+//        // Email, password, role, id not changeable from frontend for now
+//        existing.setFirstName(person.getFirstName());
+//        existing.setLastName(person.getLastName());
+//        personRepository.save(existing);
+//        return existing;
+//    }
 
     @PostMapping("login")
     public AuthToken login(@RequestBody LoginCredentials loginCredentials) {
@@ -134,30 +127,13 @@ public class PersonController {
             throw new RuntimeException("Invalid password");
         }
 
-        AuthToken authToken = new AuthToken();
-        authToken.setToken(Jwts
-                .builder()
-                .subject(person.getId().toString())
-                .expiration(getExpiration())
-                .signWith(getSecretKey())
-                .compact());
-        return authToken;
+        return jwtService.generateToken(person);
     }
 
     //localhost:8080/person?token=
     @GetMapping("person")
-    public Person getPersonByToken(@RequestParam String token) {
-        String idFromToken;
-        try {
-            idFromToken = Jwts.parser()
-                    .verifyWith(getSecretKey())
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload()
-                    .getSubject();
-        } catch (JwtException e) {
-            throw new RuntimeException("Invalid token", e);
-        }
-        return personRepository.findById(Long.parseLong(idFromToken)).orElseThrow();
+    public Person getPersonByToken() {
+        Long id = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        return personRepository.findById(id).orElseThrow();
     }
 }

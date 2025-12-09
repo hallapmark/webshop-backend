@@ -10,7 +10,7 @@ import java.util.Random;
 
 @RestController
 // for local dev, enable CrossOrigin (where frontend is deployed)
-@CrossOrigin(origins = "http://localhost:5173")
+//@CrossOrigin(origins = "http://localhost:5173") // nyyd SecurityConfigis
 public class CategoryController {
     // base URL - localhost:8080
     // API endpoint - categories

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController // annab võimekuse API päringuid siia faili teha
-@CrossOrigin(origins = "http://localhost:5173")
+//@CrossOrigin(origins = "http://localhost:5173") // pole vaja enam, securityConfigis yhe korra
 public class EmployeeController {
     // base URL - localhost:8080
     // API endpoint - employees
