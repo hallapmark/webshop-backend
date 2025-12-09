@@ -1,5 +1,8 @@
 package ee.markh.webshopbackend.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import ee.markh.webshopbackend.exception.ErrorMessage;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -17,30 +20,52 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 @Service
 public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtService jwtService;
+    
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
         if (request.getHeader("Authorization") != null && request.getHeader("Authorization").startsWith("Bearer ")) {
             String token = request.getHeader("Authorization").replace("Bearer ", "");
-//            Long id = null;
-//            try {
-            Long id = jwtService.getPersonIdByToken(token);
-//           } catch (Exception e) {
-////                response.setStatus(400);
-////                filterChain.doFilter(request, response);
-//               throw new RuntimeException("Token expired");
-//           }
-            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(id, "", new ArrayList<>()));
+
+            try {
+                Long id = jwtService.getPersonIdByToken(token);
+                SecurityContextHolder.getContext().setAuthentication(
+                        new UsernamePasswordAuthenticationToken(id, "", new ArrayList<>())
+                );
+            } catch (ExpiredJwtException e) {
+                // Token expired - write custom JSON response
+                sendErrorResponse(response, "Token expired", HttpServletResponse.SC_UNAUTHORIZED);
+                return; // Don't continue the filter chain
+            } catch (Exception e) {
+                // Other JWT errors (malformed, invalid signature, etc.)
+                sendErrorResponse(response, "Invalid token", HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
         }
-        // permit all hyppab ifist yle lihtsalt
-        // sellega laseks igale poole ligi jälle
-        //SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("", "", new ArrayList<>()));
-        filterChain.doFilter(request, response); // originaal tagasi
+
+        filterChain.doFilter(request, response);
+    }
+
+    private void sendErrorResponse(HttpServletResponse response, String message, int status) throws IOException {
+        response.setStatus(status);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        ErrorMessage errorMessage = new ErrorMessage();
+        errorMessage.setMessage(message);
+        errorMessage.setStatus(status);
+        errorMessage.setTimestamp(new Date());
+
+        response.getWriter().write(objectMapper.writeValueAsString(errorMessage));
     }
 }
