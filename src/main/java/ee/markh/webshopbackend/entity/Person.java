@@ -20,5 +20,5 @@ public class Person {
     @Column(unique = true)
     private String email;
     private String password;
-    private String role;
+    private PersonRole role;
 }

@@ -2,18 +2,18 @@ package ee.markh.webshopbackend.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ee.markh.webshopbackend.entity.Person;
+import ee.markh.webshopbackend.entity.PersonRole;
 import ee.markh.webshopbackend.exception.ErrorMessage;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.SecurityException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -21,13 +21,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtService jwtService;
-    
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -38,10 +39,11 @@ public class JwtFilter extends OncePerRequestFilter {
             String token = request.getHeader("Authorization").replace("Bearer ", "");
 
             try {
-                Long id = jwtService.getPersonIdByToken(token);
+                Person person = jwtService.getPersonIdAndRoleByToken(token);
+                List<GrantedAuthority> grantedAuthorities = getGrantedAuthorities(person);
                 SecurityContextHolder.getContext().setAuthentication(
-                        new UsernamePasswordAuthenticationToken(id, "", new ArrayList<>())
-                );
+                        new UsernamePasswordAuthenticationToken(person.getId(), "", grantedAuthorities)
+                ); // õiguste list on see ArrayList. credentials poole peale läheb nimi (ei pea panema).
             } catch (ExpiredJwtException e) {
                 // Token expired - write custom JSON response
                 sendErrorResponse(response, "Token expired", HttpServletResponse.SC_UNAUTHORIZED);
@@ -54,6 +56,21 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private static List<GrantedAuthority> getGrantedAuthorities(Person person) {
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        if (person.getRole().equals(PersonRole.ADMIN)) {
+            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("admin");
+            grantedAuthorities.add(grantedAuthority);
+        }
+        if (person.getRole().equals(PersonRole.SUPERADMIN)) {
+            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("admin");
+            GrantedAuthority grantedAuthority2 = new SimpleGrantedAuthority("superadmin");
+            grantedAuthorities.add(grantedAuthority);
+            grantedAuthorities.add(grantedAuthority2);
+        }
+        return grantedAuthorities;
     }
 
     private void sendErrorResponse(HttpServletResponse response, String message, int status) throws IOException {

@@ -1,6 +1,7 @@
 package ee.markh.webshopbackend.controller;
 
 import ee.markh.webshopbackend.entity.Person;
+import ee.markh.webshopbackend.entity.PersonRole;
 import ee.markh.webshopbackend.model.AuthToken;
 import ee.markh.webshopbackend.model.LoginCredentials;
 import ee.markh.webshopbackend.repository.PersonRepository;
@@ -52,6 +53,9 @@ public class PersonController {
         if (person.getId() != null) {
             throw new RuntimeException("Cannot add person with id");
         }
+        // this endpoint only allows Customers to be added. Make sure the frontend user is
+        // not increasing their appropriate privilege
+        person.setRole(PersonRole.CUSTOMER);
         personRepository.save(person);
         return personRepository.findAll();
     }
@@ -71,12 +75,22 @@ public class PersonController {
 
     // TODO: Remove or make editor/admin exclusive
     @PutMapping("persons")
-    public List<Person> editPerson(@RequestBody Person person) {
+    public Person editPerson(@RequestBody Person person) {
         if (person.getId() == null) {
             throw new RuntimeException("Cannot edit person without id");
         }
-        personRepository.save(person);
-        return personRepository.findAll();
+        Long personId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        System.out.println("personId:" + personId);
+        System.out.println("Person objektist:" + person.getId());
+        if (!person.getId().equals(personId)) {
+            throw new RuntimeException("You can only edit your own profile");
+        }
+        Person dbPerson = personRepository.findById(personId).orElseThrow();
+        // Whitelist the fields we want to allow to be changed.
+        // Email, password, role, id not changeable from frontend for now
+        dbPerson.setFirstName(person.getFirstName());
+        dbPerson.setLastName(person.getLastName());
+        return personRepository.save(dbPerson);
     }
 
     // TODO: Use AuthenticationPrincipal later. For now implementing in a more manual manner for practice

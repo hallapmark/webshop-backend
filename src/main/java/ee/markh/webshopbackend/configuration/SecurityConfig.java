@@ -33,8 +33,16 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/categories").permitAll()
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/persons").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/persons").hasRole("superadmin")
+                        .requestMatchers(HttpMethod.GET, "/orders").hasRole("admin")
+                        .requestMatchers(HttpMethod.POST, "/products").hasRole("admin")
+                        .requestMatchers(HttpMethod.DELETE, "/products/*").hasRole("admin")
+                        .requestMatchers(HttpMethod.PUT, "/products").hasRole("admin")
+                        .requestMatchers(HttpMethod.POST, "/categories").hasRole("admin")
+                        .requestMatchers(HttpMethod.DELETE, "/categories").hasRole("admin")
                         .anyRequest().authenticated())
                         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
                 // halb:
 //                .requestMatchers("persons").authenticated()
 //                .requestMatchers("orders").authenticated()

@@ -1,11 +1,11 @@
 package ee.markh.webshopbackend.service;
 
 import ee.markh.webshopbackend.entity.Person;
+import ee.markh.webshopbackend.entity.PersonRole;
 import ee.markh.webshopbackend.model.AuthToken;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SecurityException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -28,14 +28,19 @@ public class JwtService {
         return new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(3));
     }
 
-    public Long getPersonIdByToken(String token) {
-        String id = Jwts.parser()
+    public Person getPersonIdAndRoleByToken(String token) {
+        Claims claims = Jwts
+                .parser()
                 .verifyWith(getSecretKey())
                 .build()
                 .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
-        return Long.parseLong(id);
+                .getPayload();
+        Long id = Long.parseLong(claims.getSubject());
+        PersonRole role = PersonRole.valueOf(claims.get("role").toString());
+        Person person = new Person();
+        person.setId(id);
+        person.setRole(role);
+        return person;
     }
 
     public AuthToken generateToken(Person person) {
@@ -45,6 +50,7 @@ public class JwtService {
         authToken.setToken(Jwts
                 .builder()
                 .subject(person.getId().toString())
+                .claim("role", person.getRole())
                 .expiration(expiration)
                 .signWith(getSecretKey())
                 .compact());
