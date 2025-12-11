@@ -41,7 +41,7 @@ public class PersonController {
     @Autowired
     private JwtService jwtService;
 
-    // test swagger docs (not looking to add the tags comprehensively for now)
+    // testing swagger docs (not looking to add the tags comprehensively for now)
     @Operation(summary = "Get all persons")
     @GetMapping("persons")
     public List<Person> getPersons() {
@@ -49,15 +49,14 @@ public class PersonController {
     }
 
     @PostMapping("persons")
-    public List<Person> addPerson(@RequestBody Person person) {
+    public Person addPerson(@RequestBody Person person) {
         if (person.getId() != null) {
             throw new RuntimeException("Cannot add person with id");
         }
         // this endpoint only allows Customers to be added. Make sure the frontend user is
-        // not increasing their appropriate privilege
+        // not increasing their appropriate privilege:
         person.setRole(PersonRole.CUSTOMER);
-        personRepository.save(person);
-        return personRepository.findAll();
+        return personRepository.save(person);
     }
 
     // localhost:8080/persons?id=
