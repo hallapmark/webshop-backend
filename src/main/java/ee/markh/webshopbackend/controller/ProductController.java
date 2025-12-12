@@ -48,10 +48,9 @@ public class ProductController {
         return productRepository.findAll();
     }
 
-    // requestparamiga
-    // localhost:8080/products?id=
-    @DeleteMapping("products")
-    public List<Product> deleteProduct(@RequestParam Long id) {
+    // localhost:8080/products/id
+    @DeleteMapping("products/{id}")
+    public List<Product> deleteProduct(@PathVariable Long id) {
         productRepository.deleteById(id);
         return productRepository.findAll();
     }
