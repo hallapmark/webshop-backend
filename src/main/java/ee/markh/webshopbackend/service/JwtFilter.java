@@ -61,12 +61,16 @@ public class JwtFilter extends OncePerRequestFilter {
     private static List<GrantedAuthority> getGrantedAuthorities(Person person) {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         if (person.getRole().equals(PersonRole.ADMIN)) {
-            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("admin");
+            // Spring Security's .hasRole(bla) has a peculiarity: it expects the role to be typed "ROLE_bla"
+            // https://docs.spring.io/spring-security/reference/servlet/authorization/architecture.html
+            // "By default, role-based authorization rules include ROLE_ as a prefix."
+            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("ROLE_admin");
+            // i.e. we can then later retrieve with .hasRole("admin")
             grantedAuthorities.add(grantedAuthority);
         }
         if (person.getRole().equals(PersonRole.SUPERADMIN)) {
-            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("admin");
-            GrantedAuthority grantedAuthority2 = new SimpleGrantedAuthority("superadmin");
+            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("ROLE_admin");
+            GrantedAuthority grantedAuthority2 = new SimpleGrantedAuthority("ROLE_superadmin");
             grantedAuthorities.add(grantedAuthority);
             grantedAuthorities.add(grantedAuthority2);
         }
