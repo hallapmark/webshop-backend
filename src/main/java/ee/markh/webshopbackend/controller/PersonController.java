@@ -72,15 +72,14 @@ public class PersonController {
         return personRepository.findById(id).orElse(null);
     }
 
-    // TODO: Remove or make editor/admin exclusive
     @PutMapping("persons")
     public Person editPerson(@RequestBody Person person) {
+        // TODO: move this to 'editownprofile' endpoint, and
+        //  then under persons allow superadmin to edit anyone
         if (person.getId() == null) {
             throw new RuntimeException("Cannot edit person without id");
         }
         Long personId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
-        System.out.println("personId:" + personId);
-        System.out.println("Person objektist:" + person.getId());
         if (!person.getId().equals(personId)) {
             throw new RuntimeException("You can only edit your own profile");
         }
@@ -143,7 +142,7 @@ public class PersonController {
         return jwtService.generateToken(person);
     }
 
-    //localhost:8080/person?token=
+    //localhost:8080/person
     @GetMapping("person")
     public Person getPersonByToken() {
         Long id = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
