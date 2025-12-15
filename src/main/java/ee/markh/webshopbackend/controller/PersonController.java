@@ -37,13 +37,28 @@ public class PersonController {
         return personRepository.findAll();
     }
 
+    // localhost:8080/persons/:id
+    // get any person by id (for usage by superadmins)
+    @GetMapping("persons/{id}")
+    public Person getPerson(@PathVariable Long id) {
+        return personRepository.findById(id).orElse(null);
+    }
+
+    //localhost:8080/person
+    // get own profile with token
+    @GetMapping("person")
+    public Person getPersonByToken() {
+        Long id = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        return personRepository.findById(id).orElseThrow();
+    }
+
     @PostMapping("persons")
     public Person addPerson(@RequestBody Person person) {
         if (person.getId() != null) {
             throw new RuntimeException("Cannot add person with id");
         }
-        // this endpoint only allows Customers to be added. Make sure the frontend user is
-        // not increasing their appropriate privilege:
+        // this endpoint only allows Customers to be added. Making sure the frontend user is
+        // not increasing their appropriate privilege
         person.setRole(PersonRole.CUSTOMER);
         return personRepository.save(person);
     }
@@ -53,12 +68,6 @@ public class PersonController {
     public List<Person> deletePerson(@RequestParam Long id) {
         personRepository.deleteById(id);
         return personRepository.findAll();
-    }
-
-    // localhost:8080/persons/uuid-uuid
-    @GetMapping("persons/{id}")
-    public Person getPerson(@PathVariable Long id) {
-        return personRepository.findById(id).orElse(null);
     }
 
     @PutMapping("persons")
@@ -128,10 +137,4 @@ public class PersonController {
         return jwtService.generateToken(person);
     }
 
-    //localhost:8080/person
-    @GetMapping("person")
-    public Person getPersonByToken() {
-        Long id = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
-        return personRepository.findById(id).orElseThrow();
-    }
 }
