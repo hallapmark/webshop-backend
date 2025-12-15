@@ -32,8 +32,14 @@ public class EmployeeController {
         return employeeRepository.findAll();
     }
 
+    // req superadmin
     @PostMapping("many-employees")
     public List<Employee> addManyEmployees(@RequestBody List<Employee> employees) {
+        for (Employee employee : employees) {
+            if (employee.getId() != null) {
+                throw new RuntimeException("Cannot add employee with id");
+            }
+        }
         employeeRepository.saveAll(employees);
         return employeeRepository.findAll();
     }
