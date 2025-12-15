@@ -6,24 +6,13 @@ import ee.markh.webshopbackend.model.AuthToken;
 import ee.markh.webshopbackend.model.LoginCredentials;
 import ee.markh.webshopbackend.repository.PersonRepository;
 import ee.markh.webshopbackend.service.JwtService;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.crypto.SecretKey;
-import java.nio.file.AccessDeniedException;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 // we have OpenAPI 3.0 (Swagger) documentation (see pom.xml) so we can do
 // http://localhost:8080/swagger-ui.html
