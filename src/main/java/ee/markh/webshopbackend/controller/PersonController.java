@@ -132,11 +132,8 @@ public class PersonController {
     @PostMapping("login")
     public AuthToken login(@RequestBody LoginCredentials loginCredentials) {
         Person person = personRepository.findByEmail(loginCredentials.getEmail());
-        if (person == null) {
-            throw new RuntimeException("Invalid email");
-        }
-        if (!person.getPassword().equals(loginCredentials.getPassword())) {
-            throw new RuntimeException("Invalid password");
+        if (person == null || !person.getPassword().equals(loginCredentials.getPassword())) {
+            throw new RuntimeException("Invalid email or password");
         }
 
         return jwtService.generateToken(person);
