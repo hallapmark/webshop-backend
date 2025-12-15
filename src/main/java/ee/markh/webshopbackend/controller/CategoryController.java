@@ -22,12 +22,14 @@ public class CategoryController {
     private CategoryRepository categoryRepository;
 
     // localhost:8080/categories --> käivitan selle funktsiooni
+    // permit all
     @GetMapping("categories")
     public List<Category> getCategories() {
         return categoryRepository.findAll();
     }
 
     // tegusõna tavaliselt ei panda siia endpoint nime sisse. annotation on tegusõna
+    // req admin
     @PostMapping("categories")
     public List<Category> addCategory(@RequestBody Category category) {
         if (category.getId() != null) {
@@ -39,8 +41,9 @@ public class CategoryController {
 
     // requestparamiga
     // localhost:8080/categories?id=
-    @DeleteMapping("categories")
-    public List<Category> deleteCategory(@RequestParam Long id) {
+    // req admin
+    @DeleteMapping("categories/{id}")
+    public List<Category> deleteCategory(@PathVariable Long id) {
         categoryRepository.deleteById(id);
         return categoryRepository.findAll();
     }
