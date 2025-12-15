@@ -16,19 +16,21 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String description;
-    private String description_est;
+    private String slug;
+    private String description_en;
+    private String description_et;
     private double price;
+
+    // parempoolne tähendab kas siin on ainsus või mitmus (List<Category> või Category)
+    // vasakpoolne ytleb, kas saab taaskasutada (kas kategoorial võib mitu toodet olla)
+    @ManyToOne
+    private Category category;
 
     // @OneToOne
     // @OneToMany
     // @ManyToOne
     // @ManyToMany
 
-    // parempoolne tähendab kas siin on ainsus või mitmus (List<Category> või Category)
-    // vasakpoolne ytleb, kas saab taaskasutada (kas kategoorial võib mitu toodet olla)
-    @ManyToOne
-    private Category category;
 
     // @OneToOne näide
     // private Ingredients ingredients;
