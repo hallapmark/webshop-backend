@@ -30,7 +30,12 @@ public class PersonController {
     @Autowired
     private JwtService jwtService;
 
+    // NOTE: Security levels are handled in SecurityConfig
+    // I'm adding the levels here as comments for quick reminders,
+    // but the list in SecurityConfig is authoritative.
+
     // testing swagger docs (not looking to add the tags comprehensively for now)
+    // req superadmin
     @Operation(summary = "Get all persons")
     @GetMapping("persons")
     public List<Person> getPersons() {
@@ -38,20 +43,21 @@ public class PersonController {
     }
 
     // localhost:8080/persons/:id
-    // get any person by id (for usage by superadmins)
+    // req superadmin
     @GetMapping("persons/{id}")
     public Person getPerson(@PathVariable Long id) {
         return personRepository.findById(id).orElse(null);
     }
 
     //localhost:8080/person
-    // get own profile with token
+    // req authenticated (get own profile with token)
     @GetMapping("person")
     public Person getPersonByToken() {
         Long id = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
         return personRepository.findById(id).orElseThrow();
     }
 
+    // signup. permit all
     @PostMapping("persons")
     public Person addPerson(@RequestBody Person person) {
         if (person.getId() != null) {
@@ -63,6 +69,7 @@ public class PersonController {
         return personRepository.save(person);
     }
 
+    // req superadmin
     @PostMapping("many-persons")
     public List<Person> addManyPersons(@RequestBody List<Person> persons) {
         for (Person person : persons) {
@@ -75,12 +82,14 @@ public class PersonController {
     }
 
     // localhost:8080/persons?id=
+    // req superadmin
     @DeleteMapping("persons")
     public List<Person> deletePerson(@RequestParam Long id) {
         personRepository.deleteById(id);
         return personRepository.findAll();
     }
 
+    // req authenticated
     @PutMapping("persons")
     public Person editPerson(@RequestBody Person person) {
         // TODO: move this to 'editownprofile' endpoint, and
@@ -138,6 +147,7 @@ public class PersonController {
 //        return existing;
 //    }
 
+    // permit all
     @PostMapping("login")
     public AuthToken login(@RequestBody LoginCredentials loginCredentials) {
         Person person = personRepository.findByEmail(loginCredentials.getEmail());
