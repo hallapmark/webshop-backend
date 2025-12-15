@@ -63,6 +63,17 @@ public class PersonController {
         return personRepository.save(person);
     }
 
+    @PostMapping("many-persons")
+    public List<Person> addManyPersons(@RequestBody List<Person> persons) {
+        for (Person person : persons) {
+            if (person.getId() != null) {
+                throw new RuntimeException("Cannot add person with id");
+            }
+        }
+
+        return personRepository.saveAll(persons);
+    }
+
     // localhost:8080/persons?id=
     @DeleteMapping("persons")
     public List<Person> deletePerson(@RequestParam Long id) {

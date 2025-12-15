@@ -33,6 +33,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/categories").permitAll()
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/persons").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/many-persons").hasRole("superadmin")
                         .requestMatchers(HttpMethod.GET, "/persons/**").hasRole("superadmin")
                         .requestMatchers(HttpMethod.DELETE, "/persons").hasRole("superadmin")
                         .requestMatchers(HttpMethod.GET, "/orders").hasRole("admin")
