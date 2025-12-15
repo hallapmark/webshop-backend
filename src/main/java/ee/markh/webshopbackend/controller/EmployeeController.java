@@ -17,12 +17,25 @@ public class EmployeeController {
     private EmployeeRepository employeeRepository;
 
     // localhost:8080/employees --> käivitan selle funktsiooni
+    // permit all
     @GetMapping("employees")
     public List<Employee> getEmployees() {
         return employeeRepository.findAll();
     }
 
+    // localhost:8080/employees/id
+    // permit all
+    @GetMapping("employees/{id}")
+    public Employee getEmployee(@PathVariable String id) {
+        return employeeRepository.findById(id).orElse(null);
+    }
+    // RequestParam ja PathVariable --> mõlemaid võib üldjuhul kasutada
+    // siiski kindlasti Requestparami vaja järgnevatel juhtudel:
+    // 1. kui on valikuline (nullable) (RequestParam(required = false))
+    // 2. kui on mitu parameetrit. Pathvariable puhul läheks segaseks mis mille jaoks on. eelistatud requestparam siis
+
     // tegusõna tavaliselt ei panda siia endpoint nime sisse. annotation on tegusõna
+    // req superadmin
     @PostMapping("employees")
     public List<Employee> addEmployee(@RequestBody Employee employee) {
         if (employee.getId() != null) {
@@ -44,23 +57,13 @@ public class EmployeeController {
         return employeeRepository.findAll();
     }
 
-    // requestparamiga
-    // localhost:8080/employees?id=
-    @DeleteMapping("employees")
-    public List<Employee> deleteEmployee(@RequestParam String id) {
+    // localhost:8080/employees/id
+    // req superadmin
+    @DeleteMapping("employees/{id}")
+    public List<Employee> deleteEmployee(@PathVariable String id) {
         employeeRepository.deleteById(id);
         return employeeRepository.findAll();
     }
-
-    // localhost:8080/employees/uuid-uuid
-    @GetMapping("employees/{id}")
-    public Employee getEmployee(@PathVariable String id) {
-        return employeeRepository.findById(id).orElse(null);
-    }
-    // RequestParam ja PathVariable --> mõlemaid võib üldjuhul kasutada
-    // siiski kindlasti Requestparami vaja järgnevatel juhtudel:
-    // 1. kui on valikuline (nullable) (RequestParam(required = false))
-    // 2. kui on mitu parameetrit. Pathvariable puhul läheks segaseks mis mille jaoks on. eelistatud requestparam siis
 
     @PutMapping("employees")
     public List<Employee> editEmployee(@RequestBody Employee employee) {
