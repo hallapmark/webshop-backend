@@ -48,6 +48,22 @@ public class CategoryController {
         return categoryRepository.findAll();
     }
 
+    // req admin
+    @PutMapping("categories")
+    public List<Category> editCategory(@RequestBody Category category) {
+        if (category.getId() == null) {
+            throw new RuntimeException("Cannot edit category without id");
+        }
+
+        Category existingCategory = categoryRepository.findById(category.getId())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        existingCategory.setName(category.getName());
+        categoryRepository.save(existingCategory);
+
+        return categoryRepository.findAll();
+    }
+
     // bean test
 //    @GetMapping("random-number")
 //    public int randomNumber() {
