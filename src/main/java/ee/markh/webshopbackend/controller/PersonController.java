@@ -70,6 +70,8 @@ public class PersonController {
     }
 
     // req superadmin
+    // Superadmins can create users with any role, including other superadmins
+    // In a big org we might also have effectively a super-superadmin
     @PostMapping("many-persons")
     public List<Person> addManyPersons(@RequestBody List<Person> persons) {
         for (Person person : persons) {
@@ -83,8 +85,8 @@ public class PersonController {
 
     // localhost:8080/persons?id=
     // req superadmin
-    @DeleteMapping("persons")
-    public List<Person> deletePerson(@RequestParam Long id) {
+    @DeleteMapping("persons/{id}")
+    public List<Person> deletePerson(@PathVariable Long id) {
         personRepository.deleteById(id);
         return personRepository.findAll();
     }
