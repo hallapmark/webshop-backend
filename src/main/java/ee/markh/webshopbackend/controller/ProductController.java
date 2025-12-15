@@ -20,6 +20,7 @@ public class ProductController {
     // localhost:8080/products --> käivitan selle funktsiooni
     // localhost:8080/products?categoryId=electronics&page=0&size=20&sort=id,asc
     // size ja sort on optional automaatselt
+    // permit all
     @GetMapping("products")
     public Page<Product> getProducts(@RequestParam Long categoryId, Pageable pageable) {
         if (categoryId == 0) {
@@ -30,6 +31,7 @@ public class ProductController {
     }
 
     // tegusõna tavaliselt ei panda siia endpoint nime sisse. annotation on tegusõna
+    // req admin
     @PostMapping("products")
     public List<Product> addProduct(@RequestBody Product product) {
         if (product.getId() != null) {
@@ -42,13 +44,23 @@ public class ProductController {
         return productRepository.findAll();
     }
 
+    // req admin
     @PostMapping("many-products")
     public List<Product> addManyProducts(@RequestBody List<Product> products) {
+        for (Product product : products) {
+            if (product.getId() != null) {
+                throw new RuntimeException("Cannot add product with id");
+            }
+            if (product.getPrice() <= 0) {
+                throw new RuntimeException("Price must be greater than 0");
+            }
+        }
         productRepository.saveAll(products);
         return productRepository.findAll();
     }
 
     // localhost:8080/products/id
+    // req admin
     @DeleteMapping("products/{id}")
     public List<Product> deleteProduct(@PathVariable Long id) {
         productRepository.deleteById(id);
@@ -56,6 +68,7 @@ public class ProductController {
     }
 
     // localhost:8080/products/uuid-uuid
+    // permit all
     @GetMapping("products/{id}")
     public Product getProduct(@PathVariable Long id) {
         return productRepository.findById(id).orElse(null);
@@ -65,6 +78,7 @@ public class ProductController {
     // 1. kui on valikuline (nullable) (RequestParam(required = false))
     // 2. kui on mitu parameetrit. Pathvariable puhul läheks segaseks mis mille jaoks on. eelistatud requestparam siis
 
+    // req admin
     @PutMapping("products")
     public List<Product> editProduct(@RequestBody Product product) {
         if (product.getId() == null) {
