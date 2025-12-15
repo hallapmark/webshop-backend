@@ -3,6 +3,7 @@ package ee.markh.webshopbackend.controller;
 import ee.markh.webshopbackend.entity.Category;
 import ee.markh.webshopbackend.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class CategoryController {
     // permit all
     @GetMapping("categories")
     public List<Category> getCategories() {
-        return categoryRepository.findAll();
+        return categoryRepository.findAll(Sort.by("id"));
     }
 
     // tegusõna tavaliselt ei panda siia endpoint nime sisse. annotation on tegusõna
