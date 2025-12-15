@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -20,6 +22,11 @@ public class SecurityConfig {
 
     @Autowired
     private JwtFilter jwtFilter;
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     // siin sees määrame kuhu pääseb niisama ligi, kuhu mitte
     @Bean
@@ -46,6 +53,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/persons/**").hasRole("superadmin")
                         .requestMatchers(HttpMethod.DELETE, "/persons/*").hasRole("superadmin")
 
+                        .requestMatchers(HttpMethod.GET, "/employees/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/employees").hasRole("superadmin")
+                        .requestMatchers(HttpMethod.POST, "/many-employees").hasRole("superadmin")
+                        .requestMatchers(HttpMethod.DELETE, "/employees/*").hasRole("superadmin")
+                        .requestMatchers(HttpMethod.PUT, "/employees").hasRole("superadmin")
 
                         .requestMatchers(HttpMethod.GET, "/orders").hasRole("admin")
 
