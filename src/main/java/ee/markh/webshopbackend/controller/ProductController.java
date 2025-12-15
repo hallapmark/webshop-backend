@@ -31,7 +31,7 @@ public class ProductController {
 
     // tegusõna tavaliselt ei panda siia endpoint nime sisse. annotation on tegusõna
     @PostMapping("products")
-    public List<Product> addProduct(@RequestBody Product product, Pageable pageable) {
+    public List<Product> addProduct(@RequestBody Product product) {
         if (product.getId() != null) {
             throw new RuntimeException("Cannot add product with id");
         }
