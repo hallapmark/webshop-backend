@@ -23,7 +23,7 @@ public class Product {
 
     // parempoolne tähendab kas siin on ainsus või mitmus (List<Category> või Category)
     // vasakpoolne ytleb, kas saab taaskasutada (kas kategoorial võib mitu toodet olla)
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Category category;
 
     // @OneToOne

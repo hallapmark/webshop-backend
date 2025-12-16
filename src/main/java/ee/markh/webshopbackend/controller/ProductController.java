@@ -30,6 +30,12 @@ public class ProductController {
         }
     }
 
+    // admin use - return ALL products (no pagination, no filtering)
+    @GetMapping("admin/products")
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
+
     // tegusõna tavaliselt ei panda siia endpoint nime sisse. annotation on tegusõna
     // req admin
     @PostMapping("products")
