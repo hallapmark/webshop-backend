@@ -1,6 +1,9 @@
 package ee.markh.webshopbackend.controller;
 
+import ee.markh.webshopbackend.dto.ProductRequest;
+import ee.markh.webshopbackend.entity.Category;
 import ee.markh.webshopbackend.entity.Product;
+import ee.markh.webshopbackend.repository.CategoryRepository;
 import ee.markh.webshopbackend.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,6 +19,9 @@ public class ProductController {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     // localhost:8080/products --> käivitan selle funktsiooni
     // localhost:8080/products?categoryId=electronics&page=0&size=20&sort=id,asc
@@ -39,13 +45,22 @@ public class ProductController {
     // tegusõna tavaliselt ei panda siia endpoint nime sisse. annotation on tegusõna
     // req admin
     @PostMapping("products")
-    public List<Product> addProduct(@RequestBody Product product) {
-        if (product.getId() != null) {
-            throw new RuntimeException("Cannot add product with id");
-        }
-        if (product.getPrice() <= 0) {
+    public List<Product> addProduct(@RequestBody ProductRequest productRequest) {
+        if (productRequest.getPrice() <= 0) {
             throw new RuntimeException("Price must be greater than 0");
         }
+
+        Category category = categoryRepository.findById(productRequest.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        Product product = new Product();
+        product.setName(productRequest.getName());
+        product.setSlug(productRequest.getSlug());
+        product.setDescription_en(productRequest.getDescription_en());
+        product.setDescription_et(productRequest.getDescription_et());
+        product.setPrice(productRequest.getPrice());
+        product.setCategory(category);
+
         productRepository.save(product);
         return productRepository.findAll();
     }
@@ -53,6 +68,7 @@ public class ProductController {
     // req admin
     @PostMapping("many-products")
     public List<Product> addManyProducts(@RequestBody List<Product> products) {
+        // TODO: Update this to use List<ProductRequest> type
         for (Product product : products) {
             if (product.getId() != null) {
                 throw new RuntimeException("Cannot add product with id");
