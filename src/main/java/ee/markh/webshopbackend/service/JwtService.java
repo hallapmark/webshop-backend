@@ -25,7 +25,7 @@ public class JwtService {
     }
 
     private Date getExpiration() {
-        return new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(3));
+        return new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(60));
     }
 
     public Person getPersonIdAndRoleByToken(String token) {
