@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +27,9 @@ public class PersonController {
 
     @Autowired
     private PersonRepository personRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private JwtService jwtService;
@@ -66,6 +70,7 @@ public class PersonController {
         // this endpoint only allows Customers to be added. Making sure the frontend user is
         // not increasing their appropriate privilege
         person.setRole(PersonRole.CUSTOMER);
+        person.setPassword(passwordEncoder.encode(person.getPassword()));
         return personRepository.save(person);
     }
 
@@ -78,6 +83,8 @@ public class PersonController {
             if (person.getId() != null) {
                 throw new RuntimeException("Cannot add person with id");
             }
+
+            person.setPassword(passwordEncoder.encode(person.getPassword()));
         }
 
         return personRepository.saveAll(persons);
@@ -153,7 +160,8 @@ public class PersonController {
     @PostMapping("login")
     public AuthToken login(@RequestBody LoginCredentials loginCredentials) {
         Person person = personRepository.findByEmail(loginCredentials.getEmail());
-        if (person == null || !person.getPassword().equals(loginCredentials.getPassword())) {
+        if (person == null ||
+                !passwordEncoder.matches(loginCredentials.getPassword(), person.getPassword())) {
             throw new RuntimeException("Invalid email or password");
         }
 
