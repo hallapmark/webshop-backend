@@ -33,3 +33,7 @@ build/
 .vscode/
 
 dev.env
+
+# For dev, we want to seed a sample list of persons with various privileges.
+# The seed file should not be committed.
+/src/main/resources/seed/persons.json

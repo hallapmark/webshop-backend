@@ -10,10 +10,14 @@ public class SeedCoordinator implements CommandLineRunner {
 
     private final CategorySeeder categorySeeder;
     private final ProductSeeder productSeeder;
+    private final PersonSeeder personSeeder;
 
-    public SeedCoordinator(CategorySeeder categorySeeder, ProductSeeder productSeeder) {
+    public SeedCoordinator(CategorySeeder categorySeeder,
+                           ProductSeeder productSeeder,
+                           PersonSeeder personSeeder) {
         this.categorySeeder = categorySeeder;
         this.productSeeder = productSeeder;
+        this.personSeeder = personSeeder;
     }
 
     @Override
@@ -21,5 +25,6 @@ public class SeedCoordinator implements CommandLineRunner {
         categorySeeder.seed();
         // categories first. Products assume existing categories
         productSeeder.seed();
+        personSeeder.seed();
     }
 }
