@@ -1,0 +1,8 @@
+[
+    { "id": 1, "name": "input_devices" },
+    { "id": 2, "name": "computers" },
+    { "id": 3, "name": "storage" },
+    { "id": 4, "name": "audio" },
+    { "id": 5, "name": "accessories" },
+    { "id": 6, "name": "wearables" }
+]

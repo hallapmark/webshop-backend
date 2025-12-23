@@ -1,0 +1,207 @@
+[
+  {
+    "name": "Corevia X7 Mechanical Keyboard",
+    "slug": "corevia-x7-mechanical-keyboard",
+    "description_en": "RGB mechanical keyboard with tactile blue switches.",
+    "description_et": "RGB mehaaniline klaviatuur taktiilsete siniste lülititega.",
+    "price": 89.99,
+    "category": { "id": 1 }
+  },
+  {
+    "name": "Novatrax Bluetooth Keyboard",
+    "slug": "novatrax-bluetooth-keyboard",
+    "description_en": "Slim wireless keyboard compatible with laptops and tablets.",
+    "description_et": "Õhuke juhtmevaba klaviatuur sülearvutitele ja tahvelarvutitele.",
+    "price": 54.99,
+    "category": { "id": 1 }
+  },
+  {
+    "name": "Veltrix MX-200 Gaming Mouse",
+    "slug": "veltrix-mx-200-gaming-mouse",
+    "description_en": "Ergonomic gaming mouse with adjustable DPI and RGB lighting.",
+    "description_et": "Ergonoomiline mänguhiir reguleeritava DPI ja RGB valgustusega.",
+    "price": 39.0,
+    "category": { "id": 1 }
+  },
+  {
+    "name": "PixelForge Graphic Tablet M10",
+    "slug": "pixelforge-graphic-tablet-m10",
+    "description_en": "10-inch drawing tablet with pressure-sensitive stylus.",
+    "description_et": "10-tolline joonistustahvel survetundliku pliiatsiga.",
+    "price": 179.0,
+    "category": { "id": 1 }
+  },
+  {
+    "name": "Aurex Ergo Vertical Mouse",
+    "slug": "aurex-ergo-vertical-mouse",
+    "description_en": "Vertical ergonomic mouse designed to reduce wrist strain.",
+    "description_et": "Vertikaalne ergonoomiline hiir randme koormuse vähendamiseks.",
+    "price": 49.99,
+    "category": { "id": 1 }
+  },
+
+  {
+    "name": "Quantel Mini PC Cube",
+    "slug": "quantel-mini-pc-cube",
+    "description_en": "Compact desktop PC suitable for home and office use.",
+    "description_et": "Kompaktne lauaarvuti kodu- ja kontorikasutuseks.",
+    "price": 599.0,
+    "category": { "id": 2 }
+  },
+  {
+    "name": "Quantel Home PC S2",
+    "slug": "quantel-home-pc-s2",
+    "description_en": "Reliable home desktop PC for everyday computing tasks.",
+    "description_et": "Töökindel koduarvuti igapäevasteks arvutitöödeks.",
+    "price": 749.0,
+    "category": { "id": 2 }
+  },
+  {
+    "name": "Quantel All-in-One 24",
+    "slug": "quantel-all-in-one-24",
+    "description_en": "24-inch all-in-one PC with integrated display and speakers.",
+    "description_et": "24-tolline kõik-ühes arvuti integreeritud ekraani ja kõlaritega.",
+    "price": 899.0,
+    "category": { "id": 2 }
+  },
+  {
+    "name": "Quantel Compact Office PC",
+    "slug": "quantel-compact-office-pc",
+    "description_en": "Compact desktop PC designed for office productivity.",
+    "description_et": "Kompaktne lauaarvuti kontoritöö ja tootlikkuse jaoks.",
+    "price": 679.0,
+    "category": { "id": 2 }
+  },
+
+  {
+    "name": "Nexar Drive SSD 1TB",
+    "slug": "nexar-drive-ssd-1tb",
+    "description_en": "High-speed external SSD for backups and file transfers.",
+    "description_et": "Kiire väline SSD varundamiseks ja failiedastuseks.",
+    "price": 129.99,
+    "category": { "id": 3 }
+  },
+  {
+    "name": "Spectra 512GB USB-C Flash Drive",
+    "slug": "spectra-512gb-usb-c-flash-drive",
+    "description_en": "Compact USB-C flash drive with fast transfer speeds.",
+    "description_et": "Kompaktne USB-C mälupulk kiire andmeedastusega.",
+    "price": 59.0,
+    "category": { "id": 3 }
+  },
+  {
+    "name": "Spectra Portable HDD 2TB",
+    "slug": "spectra-portable-hdd-2tb",
+    "description_en": "Portable hard drive for everyday data storage.",
+    "description_et": "Kaasaskantav kõvaketas igapäevaseks andmesalvestuseks.",
+    "price": 89.0,
+    "category": { "id": 3 }
+  },
+  {
+    "name": "Nexar Drive SSD 2TB",
+    "slug": "nexar-drive-ssd-2tb",
+    "description_en": "High-capacity external SSD with fast and reliable performance.",
+    "description_et": "Suure mahutavusega väline SSD kiire ja töökindla jõudlusega.",
+    "price": 229.0,
+    "category": { "id": 3 }
+  },
+
+  {
+    "name": "Arcton AX-500 Headset",
+    "slug": "arcton-ax-500-headset",
+    "description_en": "Wired gaming headset with clear sound and microphone.",
+    "description_et": "Juhtmega mängupeakomplekt selge heli ja mikrofoniga.",
+    "price": 69.5,
+    "category": { "id": 4 }
+  },
+  {
+    "name": "Cortel SoundBar S100",
+    "slug": "cortel-soundbar-s100",
+    "description_en": "Slim Bluetooth soundbar for desktop or TV use.",
+    "description_et": "Õhuke Bluetooth heliriba lauaarvuti või teleri jaoks.",
+    "price": 99.99,
+    "category": { "id": 4 }
+  },
+  {
+    "name": "Sonet AirBuds Pro",
+    "slug": "sonet-airbuds-pro",
+    "description_en": "Wireless earbuds with noise isolation and long battery life.",
+    "description_et": "Juhtmevabad kõrvaklapid mürasummutuse ja pika akuajaga.",
+    "price": 149.0,
+    "category": { "id": 4 }
+  },
+  {
+    "name": "Sonet Desk Microphone X1",
+    "slug": "sonet-desk-microphone-x1",
+    "description_en": "USB desk microphone for streaming and voice calls.",
+    "description_et": "USB lauamikrofon striimimiseks ja kõnede jaoks.",
+    "price": 89.0,
+    "category": { "id": 4 }
+  },
+  {
+    "name": "Sonet Studio Headphones H700",
+    "slug": "sonet-studio-headphones-h700",
+    "description_en": "Over-ear studio headphones with balanced sound profile.",
+    "description_et": "Üle-kõrva stuudiokõrvaklapid tasakaalustatud heliga.",
+    "price": 129.0,
+    "category": { "id": 4 }
+  },
+
+  {
+    "name": "Keltor 5-Port USB Hub",
+    "slug": "keltor-5-port-usb-hub",
+    "description_en": "Aluminum USB hub expanding connectivity options.",
+    "description_et": "Alumiiniumist USB jaotur ühendusvõimaluste laiendamiseks.",
+    "price": 34.99,
+    "category": { "id": 5 }
+  },
+  {
+    "name": "Optrix Pro Monitor Stand",
+    "slug": "optrix-pro-monitor-stand",
+    "description_en": "Adjustable monitor stand with improved ergonomics.",
+    "description_et": "Reguleeritav monitorialus parema ergonoomika jaoks.",
+    "price": 89.0,
+    "category": { "id": 5 }
+  },
+  {
+    "name": "Voltair PowerBank 20000",
+    "slug": "voltair-powerbank-20000",
+    "description_en": "High-capacity power bank with fast USB-C charging.",
+    "description_et": "Suure mahutavusega akupank kiire USB-C laadimisega.",
+    "price": 49.95,
+    "category": { "id": 5 }
+  },
+  {
+    "name": "Veyronix StreamCam HD",
+    "slug": "veyronix-streamcam-hd",
+    "description_en": "Full HD webcam with built-in stereo microphone.",
+    "description_et": "Full HD veebikaamera sisseehitatud stereomikrofoniga.",
+    "price": 79.9,
+    "category": { "id": 5 }
+  },
+  {
+    "name": "Voltair USB-C Charging Station",
+    "slug": "voltair-usb-c-charging-station",
+    "description_en": "Multi-port USB-C charging station for home or office.",
+    "description_et": "Mitme pordiga USB-C laadimisjaam koju või kontorisse.",
+    "price": 59.0,
+    "category": { "id": 5 }
+  },
+
+  {
+    "name": "Lunova SmartWatch X3",
+    "slug": "lunova-smartwatch-x3",
+    "description_en": "Smartwatch with fitness tracking and health monitoring.",
+    "description_et": "Nutikell treeningu ja tervisenäitajate jälgimiseks.",
+    "price": 199.0,
+    "category": { "id": 6 }
+  },
+  {
+    "name": "Lunova SmartBand Lite",
+    "slug": "lunova-smartband-lite",
+    "description_en": "Lightweight fitness band for daily activity tracking.",
+    "description_et": "Kerge aktiivsusmonitor igapäevase liikumise jälgimiseks.",
+    "price": 59.0,
+    "category": { "id": 6 }
+  }
+]
