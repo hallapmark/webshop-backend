@@ -9,13 +9,41 @@ services:
     buildCommand: ""
     startCommand: ""
 
+    # sync: false means the Render dashboard will prompt us for the value on first deploy.
+    # 'prod,seed' (comma-separated, no space).
+    # Once seeded, change to 'prod' in the Dashboard and that will stop seeding logic.
     envVars:
-      - key: DATABASE_URL
+      - key: SPRING_PROFILES_ACTIVE
+        sync: false
+
+      # The URL is provided for the properties file which will prepend jdbc:
+      - key: DB_HOST
         fromDatabase:
           name: backend-db
-          property: connectionString
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: backend-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: backend-db
+          property: database
+
+      - key: JDBC_DATABASE_USERNAME
+        fromDatabase:
+          name: backend-db
+          property: user
+      - key: JDBC_DATABASE_PASSWORD
+        fromDatabase:
+          name: backend-db
+          property: password
+
       - key: SPRING_JPA_HIBERNATE_DDL_AUTO
         value: update
+
+      - key: JWT_SIGNING_KEY_BASE64
+        sync: false
 
 databases:
   - name: backend-db
