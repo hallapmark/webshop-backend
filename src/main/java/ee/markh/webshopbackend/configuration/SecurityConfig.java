@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -16,6 +17,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -24,8 +26,21 @@ public class SecurityConfig {
     @Autowired
     private JwtFilter jwtFilter;
 
+    @Autowired
+    private Environment env;
+
     @Value("${frontend.url}")
     private String frontendUrl;
+
+    // whitelist for swagger / openapi UI and docs
+    private static final String[] SWAGGER_WHITELIST = new String[]{
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/swagger-ui/index.html",
+            "/swagger-resources/**",
+            "/webjars/**"
+    };
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -38,7 +53,13 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(auth -> auth
+                .authorizeHttpRequests(auth -> {
+                    // Permit swagger/openapi endpoints when not running with 'prod' profile
+                    if (!Arrays.asList(env.getActiveProfiles()).contains("prod")) {
+                        auth.requestMatchers(SWAGGER_WHITELIST).permitAll();
+                    }
+
+                    auth
                         .requestMatchers(HttpMethod.GET, "/products").permitAll()
                         .requestMatchers(HttpMethod.GET, "/products/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/admin/products").hasRole("admin")
@@ -66,10 +87,11 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/orders").hasRole("admin")
 
-                        .anyRequest().authenticated())
-                        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                        .anyRequest().authenticated();
+                })
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-                // halb:
+        // halb:
 //                .requestMatchers("persons").authenticated()
 //                .requestMatchers("orders").authenticated()
 //                .anyRequest().permitAll());

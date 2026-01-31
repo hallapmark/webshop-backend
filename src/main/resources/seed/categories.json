@@ -1,5 +1,5 @@
 [
-    { "id": 1, "name": "input_devices" },
+    { "id": 1, "name": "input devices" },
     { "id": 2, "name": "computers" },
     { "id": 3, "name": "storage" },
     { "id": 4, "name": "audio" },
