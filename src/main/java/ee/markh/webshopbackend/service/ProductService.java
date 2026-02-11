@@ -32,10 +32,9 @@ public class ProductService {
     }
 
     public ProductResponse getProduct(Long id) {
-        Product product = productRepository.findById(id).orElse(null);
-        if (product == null) {
-            return null;
-        }
+        Product product = productRepository
+                .findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
         return toProductResponse(product);
     }
 
@@ -91,7 +90,7 @@ public class ProductService {
     }
 
     public ProductResponse toProductResponse(Product product) {
-        // TODO: Use MapStruct in the future
+        // TODO: Use MapStruct in the future. And perhaps in a separate DTO mapper class.
         return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
