@@ -36,7 +36,7 @@ public class ProductController {
     // tegusõna tavaliselt ei panda siia endpoint nime sisse. annotation on tegusõna
     // req admin
     @PostMapping("products")
-    public List<Product> addProduct(@RequestBody ProductRequest productRequest) {
+    public List<Product> createProduct(@RequestBody ProductRequest productRequest) {
         return productService.createProduct(productRequest);
     }
 

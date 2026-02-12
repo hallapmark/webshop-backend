@@ -105,4 +105,47 @@ class ProductControllerTest {
         assertEquals(product, result.get(0));
         BDDMockito.then(productService).should().getAllProducts();
     }
+
+    @Test
+    void createProduct_returnsList() {
+        // given
+        List<Product> expectedProducts = List.of(product);
+        BDDMockito.given(productService.createProduct(productRequest)).willReturn(expectedProducts);
+
+        // when
+        List<Product> result = productController.createProduct(productRequest);
+
+        // then
+        assertEquals(1, result.size());
+        assertEquals(product, result.get(0));
+        BDDMockito.then(productService).should().createProduct(productRequest);
+    }
+
+    @Test
+    void addManyProducts_returnsList() {
+        // given
+        ProductRequest req2 = new ProductRequest();
+        req2.setName("Another Product");
+        req2.setPrice(10.0);
+        req2.setCategoryId(1L);
+
+        List<ProductRequest> requests = List.of(productRequest, req2);
+
+        Product product2 = new Product();
+        product2.setId(2L);
+        product2.setName("Another Product");
+        product2.setPrice(10.0);
+        product2.setCategory(category);
+
+        List<Product> expectedProducts = List.of(product, product2);
+        BDDMockito.given(productService.createManyProducts(requests))
+                .willReturn(expectedProducts);
+
+        // when
+        List<Product> result = productController.addManyProducts(requests);
+
+        // then
+        assertEquals(expectedProducts, result);
+        BDDMockito.then(productService).should().createManyProducts(requests);
+    }
 }
