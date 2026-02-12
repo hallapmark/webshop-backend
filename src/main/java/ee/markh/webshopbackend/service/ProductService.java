@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -63,14 +64,25 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public List<Product> createManyProducts(List<Product> products) {
-        for (Product product : products) {
-            if (product.getId() != null) {
-                throw new RuntimeException("Cannot add product with id");
-            }
-            if (product.getPrice() <= 0) {
+    public List<Product> createManyProducts(List<ProductRequest> requests) {
+        List<Product> products = new ArrayList<>();
+        for (ProductRequest req : requests) {
+            if (req.getPrice() <= 0) {
                 throw new RuntimeException("Price must be greater than 0");
             }
+
+            Category category = categoryRepository.findById(req.getCategoryId())
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
+
+            Product product = new Product();
+            product.setName(req.getName());
+            product.setSlug(req.getSlug());
+            product.setDescription_en(req.getDescription_en());
+            product.setDescription_et(req.getDescription_et());
+            product.setPrice(req.getPrice());
+            product.setCategory(category);
+
+            products.add(product);
         }
         productRepository.saveAll(products);
         return productRepository.findAll();

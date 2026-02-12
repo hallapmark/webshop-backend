@@ -42,8 +42,8 @@ public class ProductController {
 
     // req admin
     @PostMapping("many-products")
-    public List<Product> addManyProducts(@RequestBody List<Product> products) {
-        return productService.createManyProducts(products);
+    public List<Product> addManyProducts(@RequestBody List<ProductRequest> requests) {
+        return productService.createManyProducts(requests);
     }
 
     // localhost:8080/products/id
