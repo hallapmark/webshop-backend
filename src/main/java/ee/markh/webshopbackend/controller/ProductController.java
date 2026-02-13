@@ -27,6 +27,13 @@ public class ProductController {
         return productService.getProducts(categoryId, pageable);
     }
 
+    // localhost:8080/products/id
+    // permit all
+    @GetMapping("products/{id}")
+    public ProductResponse getProduct(@PathVariable Long id) {
+        return productService.getProduct(id);
+    }
+
     // admin use - return ALL products (no pagination, no filtering)
     @GetMapping("admin/products")
     public List<Product> getAllProducts() {
@@ -51,13 +58,6 @@ public class ProductController {
     @DeleteMapping("products/{id}")
     public List<Product> deleteProduct(@PathVariable Long id) {
         return productService.deleteProduct(id);
-    }
-
-    // localhost:8080/products/uuid-uuid
-    // permit all
-    @GetMapping("products/{id}")
-    public ProductResponse getProduct(@PathVariable Long id) {
-        return productService.getProduct(id);
     }
 
     // req admin

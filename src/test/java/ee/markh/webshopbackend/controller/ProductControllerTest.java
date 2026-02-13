@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /* Unit tests for {@link ProductController} using Mockito to mock {@link ProductService}.
 Pure unit tests. */
-// TODO: Ilmselt peaks controllerile lisama ka @WebMvcTest integration testid. Eraldi klassi?
+// TODO: lisada @WebMvcTest integration testid, eraldi klassi?
 @ExtendWith(MockitoExtension.class)
 class ProductControllerTest {
 
@@ -87,8 +87,36 @@ class ProductControllerTest {
         // then
         assertEquals(1, result.getTotalElements());
         assertEquals(1, result.getContent().size());
-        assertEquals(productResponse, result.getContent().get(0));
+        assertEquals(productResponse, result.getContent().getFirst());
         BDDMockito.then(productService).should().getProducts(categoryId, pageable);
+    }
+
+    @Test
+    void getProduct_returnsProductResponse() {
+        // given
+        Long productId = 1L;
+        BDDMockito.given(productService.getProduct(productId)).willReturn(productResponse);
+
+        // when
+        ProductResponse result = productController.getProduct(productId);
+
+        // then
+        assertEquals(productResponse, result);
+        BDDMockito.then(productService).should().getProduct(productId);
+    }
+
+    @Test
+    void getProduct_propagatesRuntimeException_whenServiceThrows() {
+        // given
+        Long productId = 1L;
+        RuntimeException expectedException = new RuntimeException("Product not found");
+        BDDMockito.given(productService.getProduct(productId)).willThrow(expectedException);
+
+        // when & then
+        RuntimeException thrown = assertThrows(RuntimeException.class,
+                () -> productController.getProduct(productId));
+        assertEquals("Product not found", thrown.getMessage());
+        BDDMockito.then(productService).should().getProduct(productId);
     }
 
     @Test
@@ -102,7 +130,7 @@ class ProductControllerTest {
 
         // then
         assertEquals(1, result.size());
-        assertEquals(product, result.get(0));
+        assertEquals(product, result.getFirst());
         BDDMockito.then(productService).should().getAllProducts();
     }
 
@@ -117,7 +145,7 @@ class ProductControllerTest {
 
         // then
         assertEquals(1, result.size());
-        assertEquals(product, result.get(0));
+        assertEquals(product, result.getFirst());
         BDDMockito.then(productService).should().createProduct(productRequest);
     }
 
@@ -147,5 +175,45 @@ class ProductControllerTest {
         // then
         assertEquals(expectedProducts, result);
         BDDMockito.then(productService).should().createManyProducts(requests);
+    }
+
+    @Test
+    void deleteProduct_returnsRemainingProducts() {
+        // given
+        Long productIdToDelete = 1L;
+        Product remainingProduct = new Product();
+        remainingProduct.setId(2L);
+        remainingProduct.setName("Remaining Product");
+
+        List<Product> remainingProducts = List.of(remainingProduct);
+        BDDMockito.given(productService.deleteProduct(productIdToDelete)).willReturn(remainingProducts);
+
+        // when
+        List<Product> result = productController.deleteProduct(productIdToDelete);
+
+        // then
+        assertEquals(1, result.size());
+        assertEquals("Remaining Product", result.getFirst().getName());
+        BDDMockito.then(productService).should().deleteProduct(productIdToDelete);
+    }
+
+    @Test
+    void editProduct_returnsList() {
+        // given
+        Product updatedProduct = new Product();
+        updatedProduct.setId(1L);
+        updatedProduct.setName("Updated Product");
+        updatedProduct.setPrice(150.0);
+
+        List<Product> expectedProducts = List.of(updatedProduct);
+        BDDMockito.given(productService.updateProduct(updatedProduct)).willReturn(expectedProducts);
+
+        // when
+        List<Product> result = productController.editProduct(updatedProduct);
+
+        // then
+        assertEquals(1, result.size());
+        assertEquals("Updated Product", result.getFirst().getName());
+        BDDMockito.then(productService).should().updateProduct(updatedProduct);
     }
 }
