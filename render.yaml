@@ -40,13 +40,14 @@ services:
           property: password
 
       - key: SPRING_JPA_HIBERNATE_DDL_AUTO
-        value: update
+        value: validate
 
       - key: JWT_SIGNING_KEY_BASE64
         sync: false
 
       - key: CLOUDFRONT_BASE_URL
         sync: false
+
     runtime: docker
 
 databases:
