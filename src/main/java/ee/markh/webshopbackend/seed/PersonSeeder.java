@@ -73,7 +73,7 @@ public class PersonSeeder {
                 person.setLastName(seed.lastName());
                 person.setEmail(seed.email());
 
-                // safe enum parsing: default to CUSTOMER if missing/invalid
+                // default to CUSTOMER if missing/invalid
                 try {
                     person.setRole(PersonRole.valueOf(seed.role()));
                 } catch (Exception e) {
@@ -81,7 +81,6 @@ public class PersonSeeder {
                     person.setRole(PersonRole.CUSTOMER);
                 }
 
-                // encode the plaintext password (must be present in JSON for seeding)
                 String rawPassword = seed.password();
                 if (rawPassword == null || rawPassword.isBlank()) {
                     log.warn("Skipping {}: missing password", seed.email());

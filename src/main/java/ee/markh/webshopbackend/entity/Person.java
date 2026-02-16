@@ -1,6 +1,7 @@
 package ee.markh.webshopbackend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,8 +18,13 @@ public class Person {
     private Long id;
     private String firstName;
     private String lastName;
+
     @Column(unique = true)
     private String email;
+
     private String password;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
     private PersonRole role;
 }

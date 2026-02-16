@@ -36,7 +36,8 @@ public class JwtService {
                 .parseSignedClaims(token)
                 .getPayload();
         Long id = Long.parseLong(claims.getSubject());
-        PersonRole role = PersonRole.valueOf(claims.get("role").toString());
+        String roleName = claims.get("role", String.class);
+        PersonRole role = PersonRole.valueOf(roleName);
         Person person = new Person();
         person.setId(id);
         person.setRole(role);
