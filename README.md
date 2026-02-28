@@ -170,8 +170,20 @@ The application is configured for deployment on [Render](https://render.com) wit
 - Docker-based deployment
 - Managed PostgreSQL database
 - Environment variable injection for secrets
+- Render IaC auto-deploy gating with `autoDeployTrigger: checksPass` (deploys only after GitHub checks pass)
+
+## CI
+
+- GitHub Actions CI runs on pushes to `main`
+- GitHub Actions CI also runs on `pull_request`
+- CI is test-only: `SPRING_PROFILES_ACTIVE=test mvn -B clean verify`
+
+## Running Tests Locally
+
+```bash
+SPRING_PROFILES_ACTIVE=test mvn clean verify
+```
 
 ---
 ## Live Demo
 [https://mark-webshop.web.app](https://mark-webshop.web.app)
-
